@@ -1,9 +1,11 @@
 package com.example.garrisonbarv2;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -12,6 +14,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 
 import com.example.garrisonbarv2.models.User;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textview.MaterialTextView;
@@ -20,6 +23,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.rengwuxian.materialedittext.MaterialEditText;
+
+import java.util.Objects;
 
 public class signActivity extends AppCompatActivity {
 
@@ -53,7 +58,72 @@ public class signActivity extends AppCompatActivity {
 
 
         });
+
+        btnSignIn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showSignInWindow();
+            }
+
+
+        });
     }
+
+    private void showSignInWindow()
+    {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setTitle("Увійти");
+        dialog.setMessage("Введіть дані для входу!");
+
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View sign_in_window = inflater.inflate(R.layout.sign_in_window, null);
+        dialog.setView(sign_in_window);
+
+        final MaterialEditText email = sign_in_window.findViewById(R.id.emailField);
+        final MaterialEditText pass = sign_in_window.findViewById(R.id.passField);
+
+        dialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int which) {
+                dialogInterface.dismiss();
+            }
+        });
+
+        dialog.setPositiveButton("Sign In", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int which) {
+
+
+                if (TextUtils.isEmpty(email.getText().toString())) {
+                    Snackbar.make(root, "Enter your email", Snackbar.LENGTH_SHORT).show();
+                    return;
+                }
+
+
+                if (pass.getText().toString().length() < 5) {
+                    Snackbar.make(root, "Enter your pass, which has more than 5 elements", Snackbar.LENGTH_SHORT).show();
+                    return;
+                }
+
+                //авторизация
+                auth.signInWithEmailAndPassword(email.getText().toString(), pass.getText().toString())
+                        .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                            @Override
+                            public void onSuccess(AuthResult authResult) {
+                                startActivity(new Intent(signActivity.this, MainActivity.class));
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Snackbar.make(root, "Error authorization" + e.getMessage(), Snackbar.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
+
+        dialog.show();
+    }
+
     private void showRegisterWindow()
     {
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
@@ -101,7 +171,7 @@ public class signActivity extends AppCompatActivity {
 
                 if (pass.getText().toString().length() < 5)
                 {
-                    Snackbar.make(root, "Enter your pass? which has more than 5 elements", Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(root, "Enter your pass, which has more than 5 elements", Snackbar.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -111,11 +181,18 @@ public class signActivity extends AppCompatActivity {
                             @Override
                             public void onSuccess(AuthResult authResult) {
 
-                                User user = new User(name.getText().toString(), email.getText().toString(),
-                                                     pass.getText().toString(), phone.getText().toString());
+                                //User user = new User(name.getText().toString(), email.getText().toString(),
+                                                     //pass.getText().toString(), phone.getText().toString());
+                                User user = new User();
+                                user.setEmail(email.getText().toString());
+                                user.setName(name.getText().toString());
+                                user.setPhone(phone.getText().toString());
+                                user.setName(pass.getText().toString());
+
 
                                 //ключ пользователя это почта
-                                users.child(user.getEmail())
+                                users.push().setValue(user);
+                                users.child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                                             .setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void unused) {

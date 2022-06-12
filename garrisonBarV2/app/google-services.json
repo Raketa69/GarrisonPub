@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "606407102639",
+    "project_id": "garrisonpubapp",
+    "storage_bucket": "garrisonpubapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:606407102639:android:02cb699f9580588845445a",
+        "android_client_info": {
+          "package_name": "com.example.garrisonbarv2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "606407102639-nb2et8c7t1b2o0vntsktme4p7hpeoc7j.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA7RBCXaiwh7PPJ6oH2gJEVUODkKqx-Idk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "606407102639-nb2et8c7t1b2o0vntsktme4p7hpeoc7j.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

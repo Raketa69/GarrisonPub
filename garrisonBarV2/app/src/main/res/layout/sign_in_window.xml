@@ -15,18 +15,18 @@
         android:layout_height="match_parent">
 
         <com.rengwuxian.materialedittext.MaterialEditText
+            android:id="@+id/emailField"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/emailField"
+            android:hint="Email"
+            android:inputType="textEmailAddress"
             android:text=""
             android:textSize="20sp"
-            android:inputType="textEmailAddress"
+            app:met_baseColor="@color/lightBlack"
+            app:met_errorColor="#ddaa00"
             app:met_floatingLabel="highlight"
-            android:hint="Email"
-            app:met_singleLineEllipsis="true"
-            app:met_baseColor="#0056d3"
             app:met_primaryColor="#982360"
-            app:met_errorColor="#ddaa00" />
+            app:met_singleLineEllipsis="true" />
 
         <com.rengwuxian.materialedittext.MaterialEditText
             android:layout_width="match_parent"
@@ -38,7 +38,7 @@
             app:met_floatingLabel="highlight"
             android:hint="password"
             app:met_singleLineEllipsis="true"
-            app:met_baseColor="#0056d3"
+            app:met_baseColor="@color/lightBlack"
             app:met_primaryColor="#982360"
             app:met_errorColor="#ddaa00"
             />

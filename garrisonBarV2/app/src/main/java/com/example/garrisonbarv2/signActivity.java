@@ -4,10 +4,13 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -34,6 +37,11 @@ public class signActivity extends AppCompatActivity {
     DatabaseReference users;
     LinearLayout root;
 
+    private SharedPreferences mSettings;
+    public static final String APP_PREFERENCES = "mysettings";
+    public static final String APP_PREFERENCES_STATUS = "status";
+    private int status;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,13 +49,15 @@ public class signActivity extends AppCompatActivity {
         setContentView(R.layout.activity_sign);
         getSupportActionBar().hide();
 
+        mSettings = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
+
         btnSignIn = (Button) findViewById(R.id.btnSignIn);
         btnRegister = (Button) findViewById(R.id.btnRegistr);
 
         root = findViewById(R.id.root_element);
 
         auth = FirebaseAuth.getInstance();
-        db = FirebaseDatabase.getInstance();
+        db = FirebaseDatabase.getInstance("https://garrisonpubapp-default-rtdb.europe-west1.firebasedatabase.app/");
         users = db.getReference("Users");
 
         btnRegister.setOnClickListener(new View.OnClickListener() {
@@ -74,7 +84,6 @@ public class signActivity extends AppCompatActivity {
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
         dialog.setTitle("Увійти");
         dialog.setMessage("Введіть дані для входу!");
-
         LayoutInflater inflater = LayoutInflater.from(this);
         View sign_in_window = inflater.inflate(R.layout.sign_in_window, null);
         dialog.setView(sign_in_window);
@@ -110,6 +119,13 @@ public class signActivity extends AppCompatActivity {
                         .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                             @Override
                             public void onSuccess(AuthResult authResult) {
+
+                                // Запоминаем данные
+                                status = 1;
+                                SharedPreferences.Editor editor = mSettings.edit();
+                                editor.putInt(APP_PREFERENCES_STATUS, status);
+                                editor.apply();
+
                                 startActivity(new Intent(signActivity.this, MainActivity.class));
                             }
                         }).addOnFailureListener(new OnFailureListener() {
@@ -187,17 +203,23 @@ public class signActivity extends AppCompatActivity {
                                 user.setEmail(email.getText().toString());
                                 user.setName(name.getText().toString());
                                 user.setPhone(phone.getText().toString());
-                                user.setName(pass.getText().toString());
+                                user.setPass(pass.getText().toString());
 
+                                String TAG = this.getClass().getSimpleName();
+                                Log.e(TAG, user.getEmail().toString() + '\n' +
+                                        user.getName().toString()+ '\n' +
+                                        user.getPhone().toString()+ '\n' +
+                                        user.getPass().toString()+ '\n'
+                                );
 
                                 //ключ пользователя это почта
-                                users.push().setValue(user);
                                 users.child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                                             .setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void unused) {
                                         Snackbar.make(root, "User has added!", Snackbar.LENGTH_SHORT).show();
                                     }
+
                                 });
                             }
                         });

@@ -3,6 +3,7 @@
     package="com.example.garrisonbarv2">
 
     <application
+        android:usesCleartextTraffic="true"
         android:allowBackup="true"
         android:icon="@drawable/logo2"
         android:label="@string/app_name"

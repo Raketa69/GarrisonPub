@@ -19,6 +19,7 @@ public class ExampleUnitTest {
     public static final String APP_PREFERENCES_STATUS = "status";
     private int status;
 
+    
     @Test
     public void addition_isCorrect() {
         assertEquals(4, 2 + 2);
